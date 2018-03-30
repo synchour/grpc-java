@@ -19,6 +19,8 @@ package io.grpc.examples.helloworld;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
+import io.grpc.stub.StreamObservers;
+
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -80,6 +82,20 @@ public class HelloWorldServer {
       HelloReply reply = HelloReply.newBuilder().setMessage("Hello " + req.getName()).build();
       responseObserver.onNext(reply);
       responseObserver.onCompleted();
+    }
+    
+    @Override
+    public void sayHelloStreamReply(HelloRequest req, StreamObserver<HelloReply> responseObserver) {
+    	HelloReply reply = HelloReply.newBuilder().setMessage("Hello " + req.getName()).build();
+        responseObserver.onNext(reply);
+        HelloReply reply2 = HelloReply.newBuilder().setMessage("Hello again " + req.getName()).build();
+        responseObserver.onNext(reply2);
+        responseObserver.onCompleted();
+    }
+    
+    @Override
+    public StreamObserver<HelloRequest> sayHelloStream(StreamObserver<HelloReply> responseObserver) {
+    	return new MyHelloWorldRequestStreamObserver(responseObserver);
     }
   }
 }
